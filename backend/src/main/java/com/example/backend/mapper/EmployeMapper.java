@@ -1,30 +1,31 @@
 package com.example.backend.mapper;
 
+import com.example.backend.dto.EmployeDTO;
+import com.example.backend.entity.Employe;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.example.backend.dto.EmployeDTO;
-import com.example.backend.entity.Employe;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class EmployeMapper {
 
     @Autowired
-    private ModelMapper mMapper;
+    private ModelMapper modelMapper;
 
-    public EmployeDTO toDto(Employe e) {
-        EmployeDTO eDTO = mMapper.map(e, EmployeDTO.class);
-
-        eDTO.setId(e.getId());
-        eDTO.setNom(e.getNom());
-        eDTO.setEmail(e.getEmail());
-        eDTO.setEquipe(e.getEquipe());
-
-        return eDTO;
+    public EmployeDTO toDto(Employe employe) {
+        if (employe == null) return null;
+        return modelMapper.map(employe, EmployeDTO.class);
     }
 
-    public Employe fromDto(EmployeDTO eDTO) {
-        return mMapper.map(eDTO, Employe.class);
+    public Employe fromDto(EmployeDTO dto) {
+        if (dto == null) return null;
+        return modelMapper.map(dto, Employe.class);
+    }
+
+    public List<EmployeDTO> toDtoList(List<Employe> employes) {
+        return employes.stream().map(this::toDto).collect(Collectors.toList());
     }
 }
