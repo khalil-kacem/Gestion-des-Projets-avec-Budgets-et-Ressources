@@ -32,7 +32,7 @@ public class Projet {
     @Enumerated(EnumType.STRING)
     private StatutProjet statut;
 
-    @OneToMany(mappedBy = "projet")
+    @OneToMany(mappedBy = "projet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tache> taches = new ArrayList<>();
 
     @ManyToMany

@@ -1,9 +1,7 @@
 package com.example.backend.mapper;
 
 import com.example.backend.dto.ProjetDTO;
-import com.example.backend.dto.TacheDTO;
 import com.example.backend.entity.Projet;
-import com.example.backend.entity.Tache;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,24 +15,20 @@ public class ProjetMapper {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private TacheMapper tacheMapper;
-
     public ProjetDTO toDto(Projet projet) {
         if (projet == null) return null;
         
         ProjetDTO dto = modelMapper.map(projet, ProjetDTO.class);
         
-        // Set calculated fields
+        // Calculated fields
         if (projet.getTaches() != null) {
             dto.setNombreTaches(projet.getTaches().size());
             
             double coutTotal = projet.getTaches().stream()
-                .flatMap(t -> t.getRessources().stream())
+                .flatMap(t -> t.getRessources() != null ? t.getRessources().stream() : java.util.stream.Stream.empty())
                 .mapToDouble(r -> r.getCout() != null ? r.getCout() : 0)
                 .sum();
             
-            // Add projet-level resources
             if (projet.getRessources() != null) {
                 coutTotal += projet.getRessources().stream()
                     .mapToDouble(r -> r.getCout() != null ? r.getCout() : 0)
@@ -42,18 +36,9 @@ public class ProjetMapper {
             }
             
             dto.setCoutTotal(coutTotal);
-            dto.setBudgetRestant(projet.getBudget() - coutTotal);
+            dto.setBudgetRestant(projet.getBudget() != null ? projet.getBudget() - coutTotal : 0);
         }
         
-        // Map taches
-        if (projet.getTaches() != null) {
-            List<TacheDTO> tachesDto = projet.getTaches().stream()
-                .map(tacheMapper::toDto)
-                .collect(Collectors.toList());
-            dto.setTaches(tachesDto);
-        }
-        
-        // Map resource IDs
         if (projet.getRessources() != null) {
             dto.setRessourceIds(projet.getRessources().stream()
                 .map(r -> r.getId())
