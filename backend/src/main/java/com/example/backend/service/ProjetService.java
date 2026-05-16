@@ -1,10 +1,10 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.ProjetDTO;
-import com.example.backend.dto.RapportFinancierDTO;
+import com.example.backend.dto.*;
 import com.example.backend.entity.Projet;
 import com.example.backend.entity.Ressource;
-import com.example.backend.mapper.ProjetMapper;
+import com.example.backend.mapper.*;
 import com.example.backend.repository.ProjetRepository;
 import com.example.backend.repository.RessourceRepository;
 import com.example.backend.repository.TacheRepository;
@@ -36,7 +36,8 @@ public class ProjetService {
     }
 
     public Optional<ProjetDTO> getProjetById(Long id) {
-        return projetRepository.findById(id).map(projetMapper::toDto);
+        return projetRepository.findById(id)
+                .map(projetMapper::toDto);
     }
 
     public ProjetDTO createProjet(ProjetDTO projetDTO) {
@@ -74,33 +75,42 @@ public class ProjetService {
 
     public Optional<RapportFinancierDTO> genererRapportFinancier(Long projetId) {
         return projetRepository.findById(projetId).map(projet -> {
+
             RapportFinancierDTO rapport = new RapportFinancierDTO();
+
             rapport.setProjetId(projet.getId());
             rapport.setProjetNom(projet.getNom());
             rapport.setBudgetInitial(projet.getBudget());
 
             double coutRessources = projet.getRessources().stream()
-                .mapToDouble(r -> r.getCout() != null ? r.getCout() : 0)
-                .sum();
+                    .mapToDouble(r -> r.getCout() != null ? r.getCout() : 0.0)
+                    .sum();
 
             double coutTaches = projet.getTaches().stream()
-                .flatMap(t -> t.getRessources() != null ? t.getRessources().stream() : java.util.stream.Stream.empty())
-                .mapToDouble(r -> r.getCout() != null ? r.getCout() : 0)
-                .sum();
+                    .flatMap(t -> t.getRessources() != null
+                            ? t.getRessources().stream()
+                            : java.util.stream.Stream.empty())
+                    .mapToDouble(r -> r.getCout() != null ? r.getCout() : 0.0)
+                    .sum();
 
             double coutTotal = coutRessources + coutTaches;
+            double budget = projet.getBudget() != null ? projet.getBudget() : 0.0;
 
             rapport.setCoutTotalRessources(coutRessources);
             rapport.setCoutTotalTaches(coutTaches);
-            rapport.setBudgetRestant(projet.getBudget() - coutTotal);
+            rapport.setBudgetRestant(budget - coutTotal);
+
             rapport.setPourcentageUtilisation(
-                projet.getBudget() > 0 ? (coutTotal / projet.getBudget()) * 100 : 0
+                    budget > 0.0 ? (coutTotal / budget) * 100.0 : 0.0
             );
+
             rapport.setNombreTaches(projet.getTaches().size());
+
             rapport.setNombreTachesTerminees(
-                (int) projet.getTaches().stream()
-                    .filter(t -> t.getEtat() != null && t.getEtat().toString().equals("TERMINEE"))
-                    .count()
+                    (int) projet.getTaches().stream()
+                            .filter(t -> t.getEtat() != null
+                                    && "TERMINEE".equals(t.getEtat().toString()))
+                            .count()
             );
 
             return rapport;

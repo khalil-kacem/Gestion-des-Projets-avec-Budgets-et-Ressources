@@ -29,12 +29,13 @@ public class EmployeService {
         return employeRepository.findById(id).map(employeMapper::toDto);
     }
 
-    public Optional<EmployeDTO> createEmploye(EmployeDTO employeDTO) {
+    public EmployeDTO createEmploye(EmployeDTO employeDTO) {
+        // Vérifie si l'email existe déjà
         if (employeRepository.findByEmail(employeDTO.getEmail()).isPresent()) {
-            return Optional.empty();
+            throw new IllegalArgumentException("Un employé avec cet email existe déjà: " + employeDTO.getEmail());
         }
         Employe employe = employeMapper.fromDto(employeDTO);
-        return Optional.of(employeMapper.toDto(employeRepository.save(employe)));
+        return employeMapper.toDto(employeRepository.save(employe));
     }
 
     public Optional<EmployeDTO> updateEmploye(Long id, EmployeDTO employeDTO) {

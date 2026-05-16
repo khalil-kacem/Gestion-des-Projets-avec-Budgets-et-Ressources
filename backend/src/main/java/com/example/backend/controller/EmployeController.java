@@ -38,9 +38,12 @@ public class EmployeController {
     @PostMapping
     @Operation(summary = "Crée un nouvel employé")
     public ResponseEntity<EmployeDTO> createEmploye(@Valid @RequestBody EmployeDTO employeDTO) {
-        return employeService.createEmploye(employeDTO)
-                .map(dto -> ResponseEntity.status(HttpStatus.CREATED).body(dto))
-                .orElse(ResponseEntity.badRequest().build());
+        try {
+            EmployeDTO created = employeService.createEmploye(employeDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")

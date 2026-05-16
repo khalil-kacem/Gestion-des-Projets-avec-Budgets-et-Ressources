@@ -3,5 +3,6 @@ package com.example.backend.enums;
 public enum TypeRessource {
     MATERIEL,
     LOGICIEL,
-    HUMAIN
+    HUMAIN,
+    FINANCIER  // <-- ADD THIS
 }
