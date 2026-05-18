@@ -5,6 +5,7 @@ import com.example.backend.entity.Employe;
 import com.example.backend.entity.Projet;
 import com.example.backend.entity.Ressource;
 import com.example.backend.entity.Tache;
+import com.example.backend.enums.DisponibiliteRessource;
 import com.example.backend.mapper.TacheMapper;
 import com.example.backend.repository.EmployeRepository;
 import com.example.backend.repository.ProjetRepository;
@@ -14,8 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -94,7 +99,23 @@ public class TacheService {
 
     public Optional<TacheDTO> assignerRessources(Long tacheId, List<Long> ressourceIds) {
         return tacheRepository.findById(tacheId).map(tache -> {
+            // Verifier que toutes les ressources sont DISPONIBLES
             List<Ressource> ressources = ressourceRepository.findAllById(ressourceIds);
+            
+            List<Ressource> nonDisponibles = ressources.stream()
+                    .filter(r -> r.getDisponibilite() != DisponibiliteRessource.DISPONIBLE)
+                    .collect(Collectors.toList());
+            
+            if (!nonDisponibles.isEmpty()) {
+                String noms = nonDisponibles.stream()
+                        .map(Ressource::getNom)
+                        .collect(Collectors.joining(", "));
+                throw new IllegalArgumentException(
+                        "Ressources non disponibles : " + noms + 
+                        ". Seules les ressources avec etat DISPONIBLE peuvent etre assignees."
+                );
+            }
+            
             tache.setRessources(ressources);
             return tacheMapper.toDto(tacheRepository.save(tache));
         });
@@ -105,5 +126,42 @@ public class TacheService {
             tache.setEtat(com.example.backend.enums.EtatTache.valueOf(nouvelEtat));
             return tacheMapper.toDto(tacheRepository.save(tache));
         });
+    }
+
+    public List<Map<String, Object>> getAllWithRessources() {
+        List<Tache> taches = tacheRepository.findAll();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (Tache tache : taches) {
+            for (Ressource ressource : tache.getRessources()) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("tacheId", tache.getId());
+                map.put("tacheDescription", tache.getDescription());
+                map.put("tacheEtat", tache.getEtat().toString());
+                map.put("ressourceId", ressource.getId());
+                map.put("ressourceNom", ressource.getNom());
+                map.put("ressourceType", ressource.getType().toString());
+                map.put("ressourceCout", ressource.getCout());
+                result.add(map);
+            }
+        }
+
+        return result;
+    }
+
+    public boolean retirerRessource(Long tacheId, Long ressourceId) {
+        Optional<Tache> tacheOpt = tacheRepository.findById(tacheId);
+        if (tacheOpt.isEmpty()) {
+            return false;
+        }
+        
+        Tache tache = tacheOpt.get();
+        boolean removed = tache.getRessources().removeIf(r -> r.getId().equals(ressourceId));
+        
+        if (removed) {
+            tacheRepository.save(tache);
+        }
+        
+        return removed;
     }
 }

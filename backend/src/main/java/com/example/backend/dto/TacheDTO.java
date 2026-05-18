@@ -14,14 +14,18 @@ public class TacheDTO {
 
     private Long id;
 
+    @NotBlank(message = "La description est obligatoire")
     private String description;
 
+    @NotNull(message = "L'etat est obligatoire")
     private EtatTache etat;
 
+    @NotNull(message = "La priorite est obligatoire")
     private PrioriteTache priorite;
 
     private LocalDate deadline;
 
+    @NotNull(message = "Le projet est obligatoire")
     private Long projetId;
 
     private Long responsableId;

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/taches")
@@ -65,6 +66,12 @@ public class TacheController {
         return deleted ? ResponseEntity.noContent().build()
                        : ResponseEntity.notFound().build();
     }
+    @DeleteMapping("/{tacheId}/ressources/{ressourceId}")
+    @Operation(summary = "Retire une ressource d'une tâche")
+    public ResponseEntity<Void> retirerRessource(@PathVariable Long tacheId, @PathVariable Long ressourceId) {
+        boolean removed = tacheService.retirerRessource(tacheId, ressourceId);
+        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 
     @PostMapping("/{id}/ressources")
     @Operation(summary = "Assigne des ressources à une tâche")
@@ -82,5 +89,12 @@ public class TacheController {
         return tacheService.changerEtat(id, etat)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/all-with-ressources")
+    @Operation(summary = "Liste toutes les associations tâche-ressource avec détails")
+    public ResponseEntity<List<Map<String, Object>>> getAllWithRessources() {
+        List<Map<String, Object>> result = tacheService.getAllWithRessources();
+        return ResponseEntity.ok(result);
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/projets")
@@ -60,6 +61,12 @@ public class ProjetController {
         return deleted ? ResponseEntity.noContent().build()
                        : ResponseEntity.notFound().build();
     }
+    @DeleteMapping("/{projetId}/ressources/{ressourceId}")
+    @Operation(summary = "Retire une ressource d'un projet")
+    public ResponseEntity<Void> retirerRessource(@PathVariable Long projetId, @PathVariable Long ressourceId) {
+        boolean removed = projetService.retirerRessource(projetId, ressourceId);
+        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
 
     @PostMapping("/{id}/ressources")
     @Operation(summary = "Assigne des ressources à un projet")
@@ -76,5 +83,12 @@ public class ProjetController {
         return projetService.genererRapportFinancier(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/all-with-ressources")
+    @Operation(summary = "Liste toutes les associations projet-ressource avec détails")
+    public ResponseEntity<List<Map<String, Object>>> getAllWithRessources() {
+        List<Map<String, Object>> result = projetService.getAllWithRessources();
+        return ResponseEntity.ok(result);
     }
 }

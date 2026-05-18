@@ -13,14 +13,20 @@ import java.util.List;
 public class ProjetDTO {
 
     private Long id;
+
+    @NotBlank(message = "Le nom du projet est obligatoire")
     private String nom;
 
+    @NotNull(message = "La date de debut est obligatoire")
     private LocalDate dateDebut;
 
     private LocalDate dateFin;
 
+    @NotNull(message = "Le budget est obligatoire")
+    @Positive(message = "Le budget doit etre positif")
     private Double budget;
 
+    @NotNull(message = "Le statut est obligatoire")
     private StatutProjet statut;
 
     private Double coutTotal;
