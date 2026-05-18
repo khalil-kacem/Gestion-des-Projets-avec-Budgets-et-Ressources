@@ -1,0 +1,39 @@
+.container {
+  max-width: 1400px;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  
+  &.role-dev {
+    background: #c6f6d5;
+    color: #22543d;
+  }
+  
+  &.role-chef {
+    background: #feebc8;
+    color: #744210;
+  }
+  
+  &.role-designer {
+    background: #e9d8fd;
+    color: #553c9a;
+  }
+  
+  &.role-testeur {
+    background: #fed7d7;
+    color: #742a2a;
+  }
+  
+  &.role-analyste {
+    background: #bee3f8;
+    color: #2a4365;
+  }
+}
