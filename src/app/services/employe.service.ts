@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError } from 'rxjs';
 import { Employe } from '../models/employe.model';
+import { ErrorHandlerService } from './error-handler.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,25 +10,32 @@ import { Employe } from '../models/employe.model';
 export class EmployeService {
   private apiUrl = 'http://localhost:8082/api/employes';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private errorHandler: ErrorHandlerService
+  ) {}
 
   getAll(): Observable<Employe[]> {
-    return this.http.get<Employe[]>(this.apiUrl);
-  }
-
-  getById(id: number): Observable<Employe> {
-    return this.http.get<Employe>(`${this.apiUrl}/${id}`);
+    return this.http.get<Employe[]>(this.apiUrl).pipe(
+      catchError(this.errorHandler.handleError)
+    );
   }
 
   create(employe: Employe): Observable<Employe> {
-    return this.http.post<Employe>(this.apiUrl, employe);
+    return this.http.post<Employe>(this.apiUrl, employe).pipe(
+      catchError(this.errorHandler.handleError)
+    );
   }
 
   update(id: number, employe: Employe): Observable<Employe> {
-    return this.http.put<Employe>(`${this.apiUrl}/${id}`, employe);
+    return this.http.put<Employe>(`${this.apiUrl}/${id}`, employe).pipe(
+      catchError(this.errorHandler.handleError)
+    );
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      catchError(this.errorHandler.handleError)
+    );
   }
 }
