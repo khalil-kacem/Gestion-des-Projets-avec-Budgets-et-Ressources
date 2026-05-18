@@ -25,14 +25,15 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"],
-            "server": "src/main.server.ts",
-            "outputMode": "server",
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.css"
+            ],
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ],
             "security": {
               "allowedHosts": []
-            },
-            "ssr": {
-              "entry": "src/server.ts"
             }
           },
           "configurations": {

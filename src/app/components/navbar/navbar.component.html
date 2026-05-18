@@ -1,0 +1,31 @@
+<<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">Gestion Projets</a>
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" [class.show]="!isCollapsed">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/projets" routerLinkActive="active">Projets</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/taches" routerLinkActive="active">Tâches</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/ressources" routerLinkActive="active">Ressources</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/employes" routerLinkActive="active">Employés</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Associations</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" routerLink="/projet-ressources">Projet - Ressource</a></li>
+            <li><a class="dropdown-item" routerLink="/tache-ressources">Tâche - Ressource</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,41 @@
+/* Tache list styles */
+.card-header {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%) !important;
+}
+
+.badge {
+  &.bg-danger {
+    background: #e74c3c !important;
+  }
+  
+  &.bg-warning {
+    background: #f39c12 !important;
+    color: #000;
+  }
+  
+  &.bg-info {
+    background: #3498db !important;
+  }
+  
+  &.bg-secondary {
+    background: #95a5a6 !important;
+  }
+}
+/* Priorite CRITIQUE - ligne rouge clair */
+.table-danger {
+  background-color: #f8d7da !important;
+}
+
+/* Priorite HAUTE - ligne jaune clair */
+.table-warning {
+  background-color: #fff3cd !important;
+}
+
+/* Hover conserve la couleur */
+.table-danger:hover {
+  background-color: #f5c6cb !important;
+}
+
+.table-warning:hover {
+  background-color: #ffeeba !important;
+}

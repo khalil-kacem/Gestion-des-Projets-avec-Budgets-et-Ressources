@@ -1,0 +1,130 @@
+<div class="container-fluid mt-4">
+  <h2>Ressources</h2>
+
+  <!-- Recherche -->
+  <div class="card mb-4">
+    <div class="card-header">Recherche</div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-10">
+          <input 
+            type="text" 
+            class="form-control" 
+            placeholder="Rechercher par nom..." 
+            [(ngModel)]="searchTerm" 
+            name="searchTerm"
+            (keyup.enter)="search()">
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-primary w-100" (click)="search()">Rechercher</button>
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-secondary w-100" (click)="clearSearch()">Effacer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulaire Ajout -->
+  <div class="card mb-4" *ngIf="!editingRessource">
+    <div class="card-header">Nouvelle Ressource</div>
+    <div class="card-body">
+      <form (ngSubmit)="createRessource()" class="row g-3">
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="newRessource.nom" name="nom" required>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="newRessource.type" name="type">
+            <option value="MATERIEL">Matériel</option>
+            <option value="LOGICIEL">Logiciel</option>
+            <option value="HUMAIN">Humain</option>
+            <option value="FINANCIER">Financier</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" placeholder="Coût" [(ngModel)]="newRessource.cout" name="cout" required>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="newRessource.disponibilite" name="disponibilite">
+            <option value="DISPONIBLE">Disponible</option>
+            <option value="OCCUPEE">Occupée</option>
+            <option value="EN_MAINTENANCE">Maintenance</option>
+            <option value="INDISPONIBLE">Indisponible</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary w-100">Ajouter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Formulaire Modification -->
+  <div class="card mb-4" *ngIf="editingRessource">
+    <div class="card-header">Modifier Ressource</div>
+    <div class="card-body">
+      <form (ngSubmit)="updateRessource()" class="row g-3">
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Nom" [(ngModel)]="editingRessource.nom" name="editNom" required>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="editingRessource.type" name="editType">
+            <option value="MATERIEL">Matériel</option>
+            <option value="LOGICIEL">Logiciel</option>
+            <option value="HUMAIN">Humain</option>
+            <option value="FINANCIER">Financier</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" placeholder="Coût" [(ngModel)]="editingRessource.cout" name="editCout" required>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" [(ngModel)]="editingRessource.disponibilite" name="editDisponibilite">
+            <option value="DISPONIBLE">Disponible</option>
+            <option value="OCCUPEE">Occupée</option>
+            <option value="EN_MAINTENANCE">Maintenance</option>
+            <option value="INDISPONIBLE">Indisponible</option>
+          </select>
+        </div>
+        <div class="col-md-1">
+          <button type="submit" class="btn btn-success w-100">OK</button>
+        </div>
+        <div class="col-md-1">
+          <button type="button" class="btn btn-secondary w-100" (click)="cancelEdit()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="card-header">Liste des Ressources</div>
+    <div class="card-body p-0">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Type</th>
+            <th>Coût</th>
+            <th>Disponibilité</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ressource of ressources">
+            <td>{{ressource.id}}</td>
+            <td>{{ressource.nom}}</td>
+            <td><span class="badge bg-secondary">{{ressource.type}}</span></td>
+            <td>{{ressource.cout | currency:'EUR':'symbol':'1.0-0'}}</td>
+            <td><span class="badge bg-success">{{ressource.disponibilite}}</span></td>
+            <td>
+              <button class="btn btn-sm btn-primary me-2" (click)="editRessource(ressource)">Modifier</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteRessource(ressource.id!)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
